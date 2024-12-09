@@ -4,7 +4,7 @@ Modeling the philosophical interactions between Xunzi, Lord Shang, and Laozi thr
 
 # Setup Process
 
-`chmod +x setup_env.sh && ./setup_env.sh`\
+`chmod +x setup_env.sh && chmod +x ./myenv/bin/activate && source setup_env.sh`\
 `flask run`
 
 # Saving dependencies in `requirements.txt`
