@@ -2,4 +2,185 @@
 
 {% block content %}
     <h1>{% block title %} Philosophy Battle Simulation {% endblock %}</h1>
+    TODO: make this not ugly
+    <form method="POST">
+
+        <h2>Simulation Parameters</h2>
+        <label for="duration">Duration of the Simulation:</label>
+        <select name="duration" id="duration">
+            <option value="short">Short (a couple years)</option>
+            <option value="med">Medium (many years)</option>
+            <option value="long">Long (many decades)</option>
+        </select>
+        <br/>
+        <label for="distance">Physical Distance between Players:</label>
+        <select name="distance" id="distance">
+            <option value="short">Short (same vicinity)</option>
+            <option value="med">Medium (a few miles)</option>
+            <option value="long">Long (many miles)</option>
+        </select>
+
+
+        <h2>User Player Parameters</h2>
+        <label for="philosophy1">Philosophy:</label>
+        <select name="philosophy1" id="philosophy1">
+            <option value="NA">No Philosophy</option>
+            <option value="shang">Lord Shang</option>
+            <option value="xunzi">Xunzi</option>
+            <option value="laozi">Laozi</option>
+        </select>
+        <br/>
+        <label for="status1">Status:</label>
+        <select name="status1" id="status1">
+            <option value="leader">Leader</option>
+            <option value="follower">Follower</option>
+        </select>
+        <div id="followers1" style="display: block;">
+            <label for="followers1">Choose Number of Followers:</label>
+            <input type="number" name="followers1" id="followers1val" value=0 min="0" step="10" placeholder="Enter number of followers">
+        </div>
+        <div id="cofollowers1" style="display: none;">
+            <label for="cofollowers1">Choose Number of Co-followers:</label>
+            <input type="number" name="cofollowers1" id="cofollowers1val" value=0 min="0" step="10" placeholder="Enter number of co-followers">
+        </div>
+        <div id="followerspread1" style="display: none;">
+            <label for="followerspread1">Choose the Spread of Followers:</label>
+            <select name="followerspread1" id="spread1">
+                <option value="dense">Densely Packed</option>
+                <option value="spread-s">Slightly Spread</option>
+                <option value="spread-g">Greatly Spread</option>
+            </select>
+        </div>
+        <div id="cofollowerspread1" style="display: none;">
+            <label for="cofollowerspread1">Choose the Spread of Co-followers:</label>
+            <select name="cofollowerspread1" id="spread1">
+                <option value="dense">Densely Packed</option>
+                <option value="spread-s">Slightly Spread</option>
+                <option value="spread-g">Greatly Spread</option>
+            </select>
+        </div>
+        
+
+        
+        <h2>Opposing Player Parameters</h2>
+        <label for="philosophy2">Philosophy:</label>
+        <select name="philosophy2" id="philosophy2">
+            <option value="NA">No Philosophy</option>
+            <option value="shang">Lord Shang</option>
+            <option value="xunzi">Xunzi</option>
+            <option value="laozi">Laozi</option>
+        </select>
+        <br/>
+        <label for="status2">Status:</label>
+        <select name="status2" id="status2">
+            <option value="leader">Leader</option>
+            <option value="follower">Follower</option>
+        </select>
+        <div id="followers2" style="display: block;">
+            <label for="followers2">Choose Number of Followers:</label>
+            <input type="number" name="followers2" id="followers2val" value=0 min="0" step="10" placeholder="Enter number of followers">
+        </div>
+        <div id="cofollowers2" style="display: none;">
+            <label for="cofollowers2">Choose Number of Co-followers:</label>
+            <input type="number" name="cofollowers2" id="cofollowers2val" value=0 min="0" step="10" placeholder="Enter number of co-followers">
+        </div>
+        <div id="followerspread2" style="display: none;">
+            <label for="followerspread2">Choose the Spread of Followers:</label>
+            <select name="followerspread2" id="spread2">
+                <option value="dense">Densely Packed</option>
+                <option value="spread-s">Slightly Spread</option>
+                <option value="spread-g">Greatly Spread</option>
+            </select>
+        </div>
+        <div id="cofollowerspread2" style="display: none;">
+            <label for="cofollowerspread2">Choose the Spread of Co-followers:</label>
+            <select name="cofollowerspread2" id="spread2">
+                <option value="dense">Densely Packed</option>
+                <option value="spread-s">Slightly Spread</option>
+                <option value="spread-g">Greatly Spread</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Parameters</button>
+    </form>
+
+    <script>
+        // Player 1 (User player)
+        document.getElementById('status1').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var followerDropdown = document.getElementById('followers1');
+            var cofollowerDropdown = document.getElementById('cofollowers1');
+            var followerval = document.getElementById('followers1val').value;
+            var cofollowerval = document.getElementById('cofollowers1val').value;
+            var followerSpread = document.getElementById('followerspread1');
+            var cofollowerSpread = document.getElementById('cofollowerspread1');
+            isLeader = userPlayerValue === 'leader'
+            followerDropdown.style.display = isLeader ? 'block' : 'none';
+            cofollowerDropdown.style.display = isLeader ? 'none' : 'block';
+            
+            if (!isLeader) {
+                followerSpread.style.display = 'none'
+                if (cofollowerval && cofollowerval > 0) {
+                    cofollowerSpread.style.display = 'block'
+                }
+            } else {
+                cofollowerSpread.style.display = 'none'
+                if (followerval && followerval > 0) {
+                    followerSpread.style.display = 'block'
+                }
+            }
+        });
+
+        document.getElementById('followers1val').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var followerSpread = document.getElementById('followerspread1');
+            followerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
+        });
+
+        document.getElementById('cofollowers1val').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var cofollowerSpread = document.getElementById('cofollowerspread1');
+            cofollowerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
+        });
+
+
+        // Player 2 (Opposing Player)
+        document.getElementById('status2').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var followerDropdown = document.getElementById('followers2');
+            var cofollowerDropdown = document.getElementById('cofollowers2');
+            var followerval = document.getElementById('followers2val').value;
+            var cofollowerval = document.getElementById('cofollowers2val').value;
+            var followerSpread = document.getElementById('followerspread2');
+            var cofollowerSpread = document.getElementById('cofollowerspread2');
+            isLeader = userPlayerValue === 'leader'
+            followerDropdown.style.display = isLeader ? 'block' : 'none';
+            cofollowerDropdown.style.display = isLeader ? 'none' : 'block';
+            
+            if (!isLeader) {
+                followerSpread.style.display = 'none'
+                if (cofollowerval && cofollowerval > 0) {
+                    cofollowerSpread.style.display = 'block'
+                }
+            } else {
+                cofollowerSpread.style.display = 'none'
+                if (followerval && followerval > 0) {
+                    followerSpread.style.display = 'block'
+                }
+            }
+        });
+
+        document.getElementById('followers2val').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var followerSpread = document.getElementById('followerspread2');
+            followerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
+        });
+
+        document.getElementById('cofollowers2val').addEventListener('change', function() {
+            var userPlayerValue = this.value;
+            var cofollowerSpread = document.getElementById('cofollowerspread2');
+            cofollowerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
+        });
+    </script>
+
 {% endblock %}
