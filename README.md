@@ -4,12 +4,7 @@ Modeling the philosophical interactions between Xunzi, Lord Shang, and Laozi thr
 
 # Setup Process
 
-`python -m venv myenv`\
-`source myenv/bin/activate`\
-`pip install -r requirements.txt`\
-`export FLASK_APP=app`\
-`export FLASK_ENV=development`\
-`export FLASK_DEBUG=1`\
+`chmod +x setup_env.sh && ./setup_env.sh`\
 `flask run`
 
 # Saving dependencies in `requirements.txt`
