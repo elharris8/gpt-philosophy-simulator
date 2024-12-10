@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <h1>{% block title %} simulation results {% endblock %}</h1>
-    check out le docs -- TODO: make this not ugly
-    {{duration}}
+
+<h1>{% block title %} simulation results {% endblock %}</h1>
+<p>check out le docs -- TODO: make this not ugly</p>
+<p id="text"></p>
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var typed = new Typed("#text", {
+      strings: ["{{ simulation_result }}"], 
+      typeSpeed: 25,              
+      backSpeed: 25,              
+      loop: false                 
+    });
+  });
+</script>
+
 {% endblock %}

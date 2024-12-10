@@ -1,6 +1,55 @@
 from flask import Flask, render_template, request
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
+
+
+load_dotenv("secrets.env")
+
+client = OpenAI(
+    api_key=os.getenv("OPEN_AI_API_KEY"),  
+)
+
+def prompt_engineer(input_text):
+    """
+    Uses OpenAI's GPT-4o Mini API to generate a response in a specific style.
+
+    Args:
+        input_text (str): The user's input to prompt engineer.
+        style (str): The specific style or type of response to generate.
+
+    Returns:
+        str: The model's response.
+    """
+  
+
+    system_message = f"Respond to the user's queries as if you are a pro-wrestler."
+
+    try:
+        system_prompt = {
+            "role": "system",
+            "content": (
+                system_message
+            )
+        }
+
+        user_prompt = {
+            "role": "user",
+            "content": input_text
+        }
+
+        chat_completion = client.chat.completions.create(
+            messages=[system_prompt, user_prompt],  # Include both system and user messages
+            model="gpt-4o-mini",
+        )
+
+        return chat_completion.choices[0].message.content
+    except Exception as e:
+        return f"An error occurred: {e}"
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -16,23 +65,9 @@ def index():
         num_followers2 = request.form.get('followers2') if status2 == "leader" else request.form.get('cofollowers2')
         spread2 = request.form.get('followerspread2') if status2 == "leader" else request.form.get('cofollowerspread2')
 
-        
-        print(f'S: {duration}')
-        print(f'User Player: {distance}')
-        print(f'Opposing Player: {philosophy1}')
-        print(f's: {status1}')
-        print(num_followers1)
-        print(spread1)
+        simulation_result = prompt_engineer(f"what does {duration} mean?")
 
-        print(f'Opposing Player: {philosophy2}')
-        print(f's: {status2}')
-        print(num_followers2)
-        print(spread2)
-        
-        # return render_template('index.html', simulation=simulation, user_player=user_player, opposing_player=opposing_player)
-        return render_template('simulation.html',duration=duration,distance=distance,philosophy1=philosophy1,
-                               status1=status1,num_followers1=num_followers1,spread1=spread1,philosophy2=philosophy2,
-                               status2=status2,num_followers2=num_followers2,spread2=spread2,)
+        return render_template('simulation.html', simulation_result=simulation_result)
     return render_template('index.html')
 
 @app.route('/explanation')
