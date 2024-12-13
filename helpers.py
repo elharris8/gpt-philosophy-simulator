@@ -1,6 +1,6 @@
 import fitz  # PyMuPDF
 
-def extract_pdf_text_with_layout(filepath):
+def extract_pdf_text(filepath):
     doc = fitz.open(filepath)
     text = ""
     for page in doc:

@@ -6,6 +6,9 @@ import random
 import requests
 import logging
 from flask_session import Session
+import re
+
+from helpers import extract_pdf_text
 
 # configure application
 app = Flask(__name__)
@@ -19,47 +22,7 @@ dotenv.load_dotenv("secrets.env")
 
 openai.api_key = os.getenv("OPENAI_API_KEY").strip()
 
-# client = openai.OpenAI(
-#     api_key=os.getenv("OPEN_AI_API_KEY"),  
-# )
-
-# def prompt_engineer(input_text):
-#     """
-#     Uses OpenAI's GPT-4o Mini API to generate a response in a specific style.
-
-#     Args:
-#         input_text (str): The user's input to prompt engineer.
-#         style (str): The specific style or type of response to generate.
-
-#     Returns:
-#         str: The model's response.
-#     """
-  
-
-#     system_message = f"Respond to the user's queries as if you are a pro-wrestler."
-
-#     try:
-#         system_prompt = {
-#             "role": "system",
-#             "content": (
-#                 system_message
-#             )
-#         }
-
-#         user_prompt = {
-#             "role": "user",
-#             "content": input_text
-#         }
-
-#         chat_completion = client.chat.completions.create(
-#             messages=[system_prompt, user_prompt],  # Include both system and user messages
-#             model="gpt-4o-mini",
-#         )
-
-#         return chat_completion.choices[0].message.content
-#     except Exception as e:
-#         return f"An error occurred: {e}"
-
+gpt_feeder_input = extract_pdf_text("GPT_input.pdf")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -94,16 +57,29 @@ def index():
             flash("One or parameters missing. Please fill in all boxes.")
             return redirect("/")
 
-        return render_template('simulation.html')
+        return redirect("/simulation")
     
     else:
         return render_template('index.html')
 
 @app.route('/simulation', methods=['POST'])
 def simulation():
-    return render_template('simulation.html')
+    # Map durations to delays
+    duration_mapping = {
+        "short": 500,  # 3 seconds
+        "med": 7000,  # 7 seconds
+        "long": 15000  # 15 seconds
+    }
 
-@app.route('/results', methods=['GET', 'POST'])
+    # Get duration from session data or default to "short"
+    duration_key = session.get("data", {}).get("duration", "short")
+    duration = duration_mapping.get(duration_key, 3000)
+
+    print(f"Duration key: {duration_key}, Duration (ms): {duration}")
+
+    return render_template('simulation.html', duration=duration)
+
+@app.route('/results', methods=['POST'])
 def results():        
     # Retrieve values from session["data"]
     data = session["data"]
@@ -123,7 +99,7 @@ def results():
 
     # Construct the prompt
     prompt = f"""
-    Based on the simulation's parameters provided below, determine the winner of the battle and provide a 5-10 sentence explanation as to why this philosophy triumphed over the other in this situation:
+    Based specifically on the parameters provided in the information below, determine the winner of the battle and provide a 5-10 sentence explanation as to why this philosophy triumphed over the other in this situation. Relate your answer directly to the parameters and why this combination of parameters led you to your chosen outcome. Your initial answer should just be the name of the winning philosopher. Then in the paragraph you give your explanation.
     {context}
     """
 
@@ -136,7 +112,7 @@ def results():
     data = {
         "model": "gpt-4",
         "messages": [
-            {"role": "system", "content": "You are an expert in ancient Chinese philosophy."},
+            {"role": "system", "content": gpt_feeder_input},
             {"role": "user", "content": prompt},
         ],
     }
@@ -150,14 +126,18 @@ def results():
         result = response.json()
         explanation = result['choices'][0]['message']['content'].strip()
 
-        # Extract the winner from the explanation
-        winner = explanation.split('.')[0]  # Assumes the first sentence indicates the winner
+        # Extract the winner using a regular expression
+        winner_match = re.search(r'\b(Lord Shang|Laozi|Xunzi)\b', explanation)
+        winner = winner_match.group(0) if winner_match else "Unknown"
+
+        # update explanation
+        explanation = explanation.replace(winner, "", 1).strip()
+
     except requests.exceptions.RequestException as e:
         logging.error(f"API Request failed: {e}")
         explanation = "An error occurred while generating the explanation. Please try again later."
         winner = "Unknown"
 
-    # Render the results.html page
     return render_template('results.html', winner=winner, explanation=explanation)
 
 @app.route('/explanation')

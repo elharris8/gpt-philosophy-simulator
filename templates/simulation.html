@@ -8,9 +8,9 @@
 </div>
 
 <script>
-    // Redirect to results page after a delay
-    setTimeout(function() {
-        window.location.href = "{{ url_for('results') }}";
-    }, 1000); // 1 second delay
+  // Redirect to the results page after the specified delay
+  setTimeout(function() {
+      window.location.href = "{{ url_for('results') }}";
+  }, {{ duration }}); // Use the duration passed from Flask in milliseconds
 </script>
 {% endblock %}
