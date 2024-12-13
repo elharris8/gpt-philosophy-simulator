@@ -62,7 +62,7 @@ def index():
     else:
         return render_template('index.html')
 
-@app.route('/simulation', methods=['POST'])
+@app.route('/simulation', methods=['GET', 'POST'])
 def simulation():
     # Map durations to delays
     duration_mapping = {
@@ -79,7 +79,7 @@ def simulation():
 
     return render_template('simulation.html', duration=duration)
 
-@app.route('/results', methods=['POST'])
+@app.route('/results', methods=['GET', 'POST'])
 def results():        
     # Retrieve values from session["data"]
     data = session["data"]
@@ -127,19 +127,23 @@ def results():
         explanation = result['choices'][0]['message']['content'].strip()
 
         # Extract the winner using a regular expression
-        winner_match = re.search(r'\b(Lord Shang|Laozi|Xunzi)\b', explanation)
-        winner = winner_match.group(0) if winner_match else "Unknown"
+        if explanation[:2] == "Lo":
+            winner = "Lord Shang"
+        elif explanation[:2] == "La":
+            winner = "Laozi"
+        elif explanation[:2] == "Xu":
+            winner = "Xunzi"
 
         # update explanation
         explanation = explanation.replace(winner, "", 1).strip()
 
-    except requests.exceptions.RequestException as e:
-        logging.error(f"API Request failed: {e}")
-        explanation = "An error occurred while generating the explanation. Please try again later."
+    except:
+        explanation = "An error occurred while generating the explanation. Please try again."
         winner = "Unknown"
 
     return render_template('results.html', winner=winner, explanation=explanation)
 
+# TODO: this is now incorporated within the results.html page. but we could have some extra tabs including idk what
 @app.route('/explanation')
 def explanation():
     return render_template('explanation.html')

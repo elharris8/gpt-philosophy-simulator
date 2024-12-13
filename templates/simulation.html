@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    Simulation
+{% endblock %}
+
 {% block content %}
 <div class="container text-center">
     <h1 class="mt-5">The Battle is Underway!</h1>
@@ -11,6 +15,6 @@
   // Redirect to the results page after the specified delay
   setTimeout(function() {
       window.location.href = "{{ url_for('results') }}";
-  }, {{ duration }}); // Use the duration passed from Flask in milliseconds
+  }, {{ duration }});
 </script>
 {% endblock %}
