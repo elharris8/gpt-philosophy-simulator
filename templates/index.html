@@ -4,7 +4,7 @@
 <div class="container my-5">
     <div class="card shadow-lg">
         <div class="card-header bg-primary text-white">
-            <h1 class="card-title text-center">{% block title %}Philosophy Battle Simulation{% endblock %}</h1>
+            <h1 class="card-title text-center" id="simulation-title">{% block title %}Philosophy Battle Simulation{% endblock %}</h1>
         </div>
         <div class="card-body">
             <form method="POST">
@@ -26,7 +26,7 @@
                     </select>
                 </div>
 
-                <h2 class="mb-4">User Player Parameters</h2>
+                <h2 class="mb-4">Philosopher 1 Parameters</h2>
                 <div class="mb-3">
                     <label for="philosophy1" class="form-label">Philosophy:</label>
                     <select name="philosophy1" id="philosophy1" class="form-select">
@@ -38,17 +38,25 @@
                 </div>
                 <div class="mb-3">
                     <label for="status1" class="form-label">Status:</label>
-                    <select name="status1" id="status1" class="form-select">
+                    <select name="status1" id="status1" class="form-select" onchange="updateTitle()">
                         <option value="leader">Leader</option>
                         <option value="follower">Follower</option>
                     </select>
                 </div>
                 <div id="followers1" class="mb-3" style="display: block;">
-                    <label for="followers1">Choose Number of Followers:</label>
-                    <input type="number" name="followers1" id="followers1val" class="form-control" value=0 min="0" step="10" placeholder="Enter number of followers">
+                    <label for="followers1">Number of Followers:</label>
+                    <input type="number" name="followers1" id="followers1val" class="form-control" value="0" min="0" step="10" placeholder="Enter number of followers">
+                </div>
+                <div class="mb-3">
+                    <label for="spread1" class="form-label">Status:</label>
+                    <select name="spread1" id="spread1" class="form-select">
+                        <option value="sparse">Sparse</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="dense">Dense</option>
+                    </select>
                 </div>
 
-                <h2 class="mb-4">Opposing Player Parameters</h2>
+                <h2 class="mb-4">Philosopher 2 Parameters</h2>
                 <div class="mb-3">
                     <label for="philosophy2" class="form-label">Philosophy:</label>
                     <select name="philosophy2" id="philosophy2" class="form-select">
@@ -60,14 +68,22 @@
                 </div>
                 <div class="mb-3">
                     <label for="status2" class="form-label">Status:</label>
-                    <select name="status2" id="status2" class="form-select">
+                    <select name="status2" id="status2" class="form-select" onchange="updateTitle()">
                         <option value="leader">Leader</option>
                         <option value="follower">Follower</option>
                     </select>
                 </div>
                 <div id="followers2" class="mb-3" style="display: block;">
-                    <label for="followers2">Choose Number of Followers:</label>
-                    <input type="number" name="followers2" id="followers2val" class="form-control" value=0 min="0" step="10" placeholder="Enter number of followers">
+                    <label for="followers2">Number of Followers:</label>
+                    <input type="number" name="followers2" id="followers2val" class="form-control" value="0" min="0" step="10" placeholder="Enter number of followers">
+                </div>
+                <div class="mb-3">
+                    <label for="spread2" class="form-label">Status:</label>
+                    <select name="spread2" id="spread2" class="form-select">
+                        <option value="sparse">Sparse</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="dense">Dense</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save Parameters</button>
@@ -77,36 +93,27 @@
 </div>
 
 <script>
-    // Player 1 (User player)
-    document.getElementById('status1').addEventListener('change', function() {
-        var userPlayerValue = this.value;
-        var followerDropdown = document.getElementById('followers1');
-        var followerval = document.getElementById('followers1val').value;
-        isLeader = userPlayerValue === 'leader';
-        followerDropdown.style.display = isLeader ? 'block' : 'none';
-    });
+    function updateTitle() {
+        const status1 = document.getElementById('status1').value;
+        const status2 = document.getElementById('status2').value;
+        
+        // Get the label inside the "followers1" div
+        const followers1Label = document.querySelector('#followers1 label');
+        const followers2Label = document.querySelector('#followers2 label');
+        
+        if (status1 === 'follower') {
+            followers1Label.textContent = 'Number of Co-Followers:';
+        } else {
+            followers1Label.textContent = 'Number of Followers:';
+        }
 
-    document.getElementById('followers1val').addEventListener('change', function() {
-        var userPlayerValue = this.value;
-        var followerSpread = document.getElementById('followerspread1');
-        followerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
-    });
-
-    // Player 2 (Opposing Player)
-    document.getElementById('status2').addEventListener('change', function() {
-        var userPlayerValue = this.value;
-        var followerDropdown = document.getElementById('followers2');
-        var followerval = document.getElementById('followers2val').value;
-        isLeader = userPlayerValue === 'leader';
-        followerDropdown.style.display = isLeader ? 'block' : 'none';
-    });
-
-    document.getElementById('followers2val').addEventListener('change', function() {
-        var userPlayerValue = this.value;
-        var followerSpread = document.getElementById('followerspread2');
-        followerSpread.style.display = userPlayerValue && userPlayerValue > 0 ? 'block' : 'none';
-    });
+        if (status2 === 'follower') {
+            followers2Label.textContent = 'Number of Co-Followers:';
+        } else {
+            followers2Label.textContent = 'Number of Followers:';
+        }
+    }
 </script>
 
-{% endblock %}
 
+{% endblock %}

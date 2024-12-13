@@ -13,4 +13,7 @@ Modeling the philosophical interactions between Xunzi, Lord Shang, and Laozi thr
 
 
 pip install requests
-pip install openai==0.28 for access to ChatGPT
+pip install openai==0.28 # for access to ChatGPT
+pip install python-dotenv
+pip install fitz
+pip install pymupdf
