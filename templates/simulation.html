@@ -12,9 +12,9 @@
 </div>
 
 <script>
-  // Redirect to the results page after the specified delay
   setTimeout(function() {
-      window.location.href = "{{ url_for('results') }}";
-  }, {{ duration }});
+    window.location.href = "{{ url_for('results') }}";
+}, {{ duration }}); // Default to 3000ms if duration is missing
 </script>
+
 {% endblock %}

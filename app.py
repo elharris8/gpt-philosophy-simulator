@@ -81,20 +81,17 @@ def simulation():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():        
-    # Retrieve values from session["data"]
-    data = session["data"]
-
     context = f"""
-    Duration: {data['duration']}
-    Distance: {data['distance']}
-    User Philosophy: {data['phil1']}
-    User Status: {data['status1']}
-    User Followers: {data['follow1']}
-    User Spread: {data['spread1']}
-    Opponent Philosophy: {data['phil2']}
-    Opponent Status: {data['status2']}
-    Opponent Followers: {data['follow2']}
-    Opponent Spread: {data['spread2']}
+    Duration: {session["data"]['duration']}
+    Distance: {session["data"]['distance']}
+    User Philosophy: {session["data"]['phil1']}
+    User Status: {session["data"]['status1']}
+    User Followers: {session["data"]['follow1']}
+    User Spread: {session["data"]['spread1']}
+    Opponent Philosophy: {session["data"]['phil2']}
+    Opponent Status: {session["data"]['status2']}
+    Opponent Followers: {session["data"]['follow2']}
+    Opponent Spread: {session["data"]['spread2']}
     """
 
     # Construct the prompt
